@@ -2,9 +2,9 @@
 
 // Initialise variables
 $endpoint = "https://api.zamzar.com/v1";
-$apiKey = "__________________________";
-$sourceFilePath = "sample.pdf"; // change your source file
-$convertedFilePath = "/output/"; // change your output folder
+$apiKey = "YOUR_API_KEY";
+$sourceFilePath = "./tmp/test.pdf"; 
+$convertedFilePath = realpath('./tmp/');
 $targetFormat = "txt";
 
 // Start the job
@@ -25,7 +25,7 @@ echo "Conversion done!\n";
 // Download the converted files
 foreach($job->target_files as $file) {
     echo "Downloading start of converted file: $file->name<br/><br/>";
-    download_file($apiKey, $endpoint, $file->id, $convertedFilePath.$file->name);
+    download_file($apiKey, $endpoint, $file->id, $convertedFilePath.'/'.$file->name);
 }
 
 function start_conversion($apiKey, $endpoint, $sourceFilePath, $targetFormat) {
@@ -76,11 +76,13 @@ function download_file($apiKey, $endpoint, $fileID, $fileSavePath) {
   curl_setopt($ch, CURLOPT_USERPWD, $apiKey . ":"); // Set the API key as the basic auth username
   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-  //$fh = fopen($fileSavePath, "wb"); // Error occurs
-  //curl_setopt($ch, CURLOPT_FILE, $fh); // Error occurs
-  echo 'Text output: <br/>';
+//   echo '<br/><br/> realpath output file: <br/>'.realpath('./output/');
+ 
+  $fh = fopen($fileSavePath, "wb"); // Error occurs
+  curl_setopt($ch, CURLOPT_FILE, $fh); // Error occurs
+  
   $body = curl_exec($ch);
   curl_close($ch);
-
-  echo '<br/><br/> print: <br/><br/>'.print_r($body);
+  echo '<br/>output file: <br/>'.$fileSavePath;
+  echo '<br/><br/> File Downloaded: '.print_r($body);
 }
